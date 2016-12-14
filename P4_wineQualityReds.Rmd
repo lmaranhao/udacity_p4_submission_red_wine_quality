@@ -38,7 +38,7 @@ I'll start by plotting a histogram of the `quality` variable to check how it's d
 ```{r echo=FALSE, Univariate_Plots}
 # histogram of quality
 ggplot(data = reds, aes(quality)) + 
-  geom_histogram(binwidth = 0.5) + 
+  geom_bar() + 
   scale_x_continuous(breaks = seq(3, 8, 1))
 
 ```
@@ -64,17 +64,26 @@ ggplot(data = reds, aes(volatile.acidity)) +
 ```{r}
 ggplot(data = reds, aes(citric.acid)) +
   geom_histogram(binwidth = 0.01)
+
+ggplot(data = reds, aes(citric.acid)) +
+  geom_histogram() +
+  scale_x_log10()
+
 ```
 
-*citric.acid*: Lots of values are equal to zero with another peak at around 0.5. Looks like a plateau distribution with some peaks at round numbers.
+*citric.acid*: Lots of values are equal to zero with another peak at around 0.5. Looks like a plateau distribution with some peaks at round numbers. The plot using `scale_x_log10` is a left skewed distribution.
 
 ```{r}
 ggplot(data = reds, aes(residual.sugar)) +
   geom_histogram(binwidth = 0.2) + 
   scale_x_continuous(limits = c(0, 8))
+
+ggplot(data = reds, aes(residual.sugar)) +
+  geom_histogram() +
+  scale_x_log10()
 ```
 
-*residual.sugar*: Right skewed distribution. 21 outliers > 8 have been discarded. 
+*residual.sugar*: Right skewed distribution. 21 outliers > 8 have been discarded. The log_10 plot shows a distribuition that is very close to the first one.
 
 ```{r}
 ggplot(data = reds, aes(chlorides)) + 
@@ -88,17 +97,26 @@ ggplot(data = reds, aes(chlorides)) +
 ggplot(data = reds, aes(free.sulfur.dioxide)) +
   geom_histogram(binwidth = 2) + 
   scale_x_continuous(limits = c(0, 60))
+
+ggplot(data = reds, aes(free.sulfur.dioxide)) +
+  geom_histogram() +
+  scale_x_continuous()
 ```
 
-*free.sulfur.dioxide*: Right skewed distribution. 4 outliers > 50 have been discarded. 
+*free.sulfur.dioxide*: Right skewed distribution. 4 outliers > 50 have been discarded. The log_10 plot also shows a right skewed distribution.
 
 ```{r}
 ggplot(data = reds, aes(total.sulfur.dioxide)) + 
   geom_histogram(binwidth = 5) + 
   scale_x_continuous(limits = c(0, 200))
+
+ggplot(data = reds, aes(total.sulfur.dioxide)) + 
+  geom_histogram(binwidth = 0.075) +
+  scale_x_log10()
+
 ```
 
-*total.sulfur.dioxide*: Right skewed distribution. 2 outliers > 200 have been discarded. 
+*total.sulfur.dioxide*: Right skewed distribution. 2 outliers > 200 have been discarded. In this case the log_10 plot shows a bimodal histogram. 
 
 ```{r}
 ggplot(data = reds, aes(density)) + 
@@ -194,8 +212,7 @@ ggplot(data = reds, aes(x = quality.factor, y = fixed.acidity)) +
   geom_boxplot()
 ```
 
-*quality vs fixed.acidity*: No correlation is shown in those plots.
-
+*quality vs fixed.acidity*: No correlation is shown in those plots. The linear regression line is flat, almost horizontal just like the box plot means.
 
 ```{r echo=FALSE}
 ggplot(data = reds, aes(x = quality, y = volatile.acidity)) + 
@@ -205,7 +222,7 @@ ggplot(data = reds, aes(x = quality.factor, y = volatile.acidity)) +
   geom_boxplot()
 ```
 
-*quality vs volatile.acidity*: Those 2 plots above confirm what we see in the correlation matrix. `quality` and `volatile.acidity` have a strong negative correlation.
+*quality vs volatile.acidity*: Those 2 plots above confirm what we see in the correlation matrix. `quality` and `volatile.acidity` have a strong negative correlation. The linear regression line has a good negative angle and the boxplots confirm that with the means decreasing as the quality grows.
 
 ```{r echo=FALSE}
 ggplot(data = reds, aes(x = quality, y = citric.acid)) + 
@@ -215,7 +232,7 @@ ggplot(data = reds, aes(x = quality.factor, y = citric.acid)) +
   geom_boxplot()
 ```
 
-*quality vs citric.acid*: This relationship does not stand out in the correlation matrix but here we can see that `quality` and `citric.acid` do correlate with each other.
+*quality vs citric.acid*: This relationship does not stand out in the correlation matrix but here we can see that `quality` and `citric.acid` do correlate with each other. The linear regression line has a good positive angle and the boxplots confirm that with the means growing as the quality grows.
 
 ```{r echo=FALSE}
 ggplot(data = reds, aes(x = quality, y = residual.sugar)) + 
@@ -225,7 +242,7 @@ ggplot(data = reds, aes(x = quality.factor, y = residual.sugar)) +
   geom_boxplot()
 ```
 
-*quality vs residual.sugar*: The flat horizontal regression line indicates no correlation here.
+*quality vs residual.sugar*: The flat horizontal regression line indicates no correlation here  and the box plos medians confirm that.
 
 ```{r echo=FALSE}
 ggplot(data = reds, aes(x = quality, y = chlorides)) + 
@@ -245,7 +262,7 @@ ggplot(data = reds, aes(x = quality.factor, y = free.sulfur.dioxide)) +
   geom_boxplot()
 ```
 
-*quality vs residual.sugar*: The box plot is clear that there is no correlation here. 
+*quality vs free.sulfur.dioxide*: The is no correlation here. The linear regression line is flat, almost horizontal just like the box plot means.
 
 ```{r echo=FALSE}
 ggplot(data = reds, aes(x = quality, y = total.sulfur.dioxide)) + 
@@ -255,7 +272,7 @@ ggplot(data = reds, aes(x = quality.factor, y = total.sulfur.dioxide)) +
   geom_boxplot()
 ```
 
-*quality vs total.sulfur.dioxide*: Same as above. The box plot is clear that there is no correlation here. 
+*quality vs total.sulfur.dioxide*: No correlation. The linear regression has a small negative angle which is not confirmed by the box plot.
 
 ```{r echo=FALSE}
 ggplot(data = reds, aes(x = quality, y = pH)) +
@@ -317,7 +334,8 @@ ggplot(data = reds,
 
 ```{r echo=FALSE}
 ggplot(data = reds, 
-                aes(x = citric.acid, y = volatile.acidity, color = quality.factor)) + 
+                aes(x = citric.acid, 
+                    y = volatile.acidity, color = quality.factor)) + 
   geom_jitter(alpha = 0.6, size = 2) + 
   scale_color_brewer(palette = "Greens") + 
   theme_dark()
@@ -327,7 +345,8 @@ ggplot(data = reds,
 
 ```{r echo=FALSE}
 ggplot(data = reds, 
-                aes(x = volatile.acidity, y = alcohol, color = quality.factor)) + 
+                aes(x = volatile.acidity, 
+                    y = alcohol, color = quality.factor)) + 
   geom_jitter(alpha = 0.6, size = 2) + 
   scale_color_brewer(palette = "Greens") + 
   theme_dark()
@@ -345,57 +364,39 @@ They confirm the correlation numbers, some with a more dense plot, others are mo
 
 ### Plot One
 ```{r echo=FALSE, Plot_Two}
-plot1 <- ggplot(data = reds, aes(x = quality, y = alcohol)) + 
+ggplot(data = reds, aes(x = quality, y = alcohol)) + 
   geom_jitter(alpha = 0.4) + 
   geom_smooth(method=lm) + 
   ggtitle("Quality vs. Alcohol Scatterplot") + 
   labs(x = "Quality (score between 0 and 10)", y = "Alcohol (% by volume)")
-plot2 <- ggplot(data = reds, aes(x = quality.factor, y = alcohol)) + 
-  geom_boxplot() + 
-  ggtitle("Quality vs. Alcohol box plot") + 
-  labs(x = "Quality (score between 0 and 10)", y = "Alcohol (% by volume)")
-
-grid.arrange(plot1, plot2, ncol = 1, nrow = 2)
 ```
 
 ### Description One
-`quality` and `alcohol` correlation is very clear with these plots. The linear regression line shows graphically this correlation which is confirmed by the box plot.
+`quality` and `alcohol` correlation is very clear here. The linear regression line shows graphically this correlation.
 
 ### Plot Two
 ```{r echo=FALSE, Plot_One}
-plot1 <- ggplot(data = reds, aes(x = quality, y = volatile.acidity)) + 
-  geom_jitter(alpha = 0.4) + 
-  geom_smooth(method=lm) + 
-  ggtitle("Quality vs. Volatile Acidity Scatterplot") + 
-  labs(x = "Quality (score between 0 and 10)", y = "Volatile Acidity (acetic acid - g / dm^3)")
-plot2 <- ggplot(data = reds, aes(x = quality.factor, y = volatile.acidity)) + 
+ggplot(data = reds, aes(x = quality.factor, y = volatile.acidity)) + 
   geom_boxplot() + 
   ggtitle("Quality vs. Volatile Acidity box plot") + 
-  labs(x = "Quality (score between 0 and 10)", y = "Volatile Acidity (acetic acid - g / dm^3)")
-
-grid.arrange(plot1, plot2, ncol = 1, nrow = 2)
+  labs(x = "Quality (score between 0 and 10)", 
+       y = "Volatile Acidity (acetic acid - g / dm^3)")
 ```
 
 ### Description Two
-The negative correlation between `quality` and `volatile.acid` is shown in those plots. The regression line and box plot confirm it.
+The negative correlation between `quality` and `volatile.acid` is shown in this box plot with the means decreasing as the quality grows..
 
 ### Plot Three
 ```{r echo=FALSE, Plot_Three}
-plot1 <- ggplot(data = reds, aes(x = quality, y = citric.acid)) + 
-  geom_jitter(alpha = 0.4) + 
-  geom_smooth(method=lm) + 
-  ggtitle("Quality vs. Citric Acidity Scatterplot") + 
-  labs(x = "Quality (score between 0 and 10)", y = "Citric Acidity (acetic acid - g / dm^3)")
-plot2 <- ggplot(data = reds, aes(x = quality.factor, y = citric.acid)) + 
+ggplot(data = reds, aes(x = quality.factor, y = citric.acid)) + 
   geom_boxplot() + 
   ggtitle("Quality vs. Citric Acidity box plot") + 
-  labs(x = "Quality (score between 0 and 10)", y = "Citric Acidity (acetic acid - g / dm^3)")
-
-grid.arrange(plot1, plot2, ncol = 1, nrow = 2)
+  labs(x = "Quality (score between 0 and 10)", 
+       y = "Citric Acidity (acetic acid - g / dm^3)")
 ```
 
 ### Description Three
-This is the surprise. This correlation didn't stand out in the correlation matrix but when see those plots it's clear that this correlation exists and is strong enough to be taken into consideration.
+This is the surprise. This correlation didn't stand out in the correlation matrix but when we see this box plot it's clear that this correlation exists and is strong enough to be taken into consideration.
 
 ------
 
